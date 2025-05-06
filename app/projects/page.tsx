@@ -14,6 +14,7 @@ export default function ProjectsPage() {
         "Developed and optimized SQL/Snowflake queries to extract, transform, and visualize data, enabling accurate reporting on customer trends, product performance, and sales forecasting, aligning with data-driven decision-making strategies.",
       technologies: ["Python", "SQL", "Power BI", "Google Analytics", "AWS", "Excel"],
       period: "Oct. 2024 - Nov. 2024",
+      link: "https://github.com/a-n-u-r-a-g/InsightPro-eCommerce-Analytics-Suite",
       points: [
         "Designed and implemented automated data pipelines in SQL/Snowflake to streamline data processing workflows, improving efficiency in expense tracking, financial settlements, and operational analytics.",
         "Utilized SQL and Power BI to create dynamic dashboards, transforming raw data into actionable insights for senior management, supporting investment and business analytics initiatives.",
@@ -26,6 +27,7 @@ export default function ProjectsPage() {
         "Designed and implemented a hybrid ensemble model combining CNN, Bi-LSTM, Random Forest, Gradient Boost, and XG Boost to enhance anomaly detection accuracy in network traffic.",
       technologies: ["Python", "Machine Learning", "Deep Learning"],
       period: "Aug. 2024 - Oct. 2024",
+      link: "https://github.com/a-n-u-r-a-g/Hybrid-Ensemble-Learning",
       points: [
         "Integrated SHAP-based Explainable AI techniques to improve model transparency and interpretability, supporting critical decision-making in cybersecurity operations.",
         "Developed a scalable pipeline for preprocessing, multi-model classification, and real-time explainability, tailored for high-volume and heterogeneous network environments.",
@@ -38,6 +40,7 @@ export default function ProjectsPage() {
         "Designed and implemented a secure container identity framework by generating hashed identifiers (Docker IDs, container IDs) linked to access privileges, ensuring granular identity verification in runtime and testing environments.",
       technologies: ["Python", "Next JS", "JSON", "Docker", "Bash Scripting"],
       period: "Aug. 2023 - Oct. 2023",
+      link: "https://github.com/a-n-u-r-a-g/CIAM",
       points: [
         "Developed a Python-based logic layer integrated with Docker and Bash to automate identity generation, access mapping, and secure role-based controls across containerized services.",
         "Engineered a modular front-end using Next.js for real-time visibility into container access rights and lifecycle events, enhancing security posture and operational transparency.",
@@ -114,7 +117,7 @@ export default function ProjectsPage() {
                 </div>
               </CardContent>
               <CardFooter>
-                <Link href="#" className="text-sm flex items-center text-primary hover:underline group">
+                <Link href={project.link} target="_blank" rel="noopener noreferrer" className="text-sm flex items-center text-primary hover:underline group">
                   <span>View Project</span>
                   <ExternalLink className="ml-1 h-3 w-3 transition-transform duration-300 group-hover:translate-x-1" />
                 </Link>
