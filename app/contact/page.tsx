@@ -113,7 +113,7 @@ export default function ContactPage() {
               <MapPin className="h-10 w-10 text-primary mb-4" />
               <h3 className="font-medium mb-1">Location</h3>
               <p className="text-sm text-muted-foreground mb-2">Based in</p>
-              <span className="text-sm font-medium">Singrauli, Madhya Pradesh, India</span>
+              <span className="text-sm font-medium"> Pune, Maharastra, India</span>
             </CardContent>
           </Card>
         </motion.div>
