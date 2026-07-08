@@ -8,6 +8,17 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Mail, Phone, MapPin, Send } from "lucide-react"
 import { motion } from "framer-motion"
+import { toast } from "@/hooks/use-toast"
+import { z } from "zod"
+
+const contactSchema = z.object({
+  name: z.string().min(1, "Name is required").max(100),
+  email: z.string().min(1, "Email is required").email("Invalid email address"),
+  subject: z.string().min(1, "Subject is required").max(200),
+  message: z.string().min(1, "Message is required").max(5000),
+})
+
+type FormErrors = Partial<Record<keyof typeof contactSchema._type, string>>
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -16,59 +27,67 @@ export default function ContactPage() {
     subject: "",
     message: "",
   })
-
+  const [errors, setErrors] = useState<FormErrors>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
+    if (errors[name as keyof FormErrors]) {
+      setErrors((prev) => ({ ...prev, [name]: undefined }))
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setIsSubmitting(true);
-
-  try {
-    const res = await fetch("/api/contact", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    });
-
-    if (res.ok) {
-      setIsSubmitted(true);
-      setFormData({ name: "", email: "", subject: "", message: "" });
-      setTimeout(() => setIsSubmitted(false), 3000);
-    } else {
-      alert("Failed to send message. Please try again.");
-    }
-  } catch (error) {
-    alert("Something went wrong. Please try again.");
-  } finally {
-    setIsSubmitting(false);
-  }
-}
-  
-  /*const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    setErrors({})
+
+    const result = contactSchema.safeParse(formData)
+    if (!result.success) {
+      const fieldErrors: FormErrors = {}
+      for (const issue of result.error.issues) {
+        const field = issue.path[0] as keyof FormErrors
+        if (!fieldErrors[field]) {
+          fieldErrors[field] = issue.message
+        }
+      }
+      setErrors(fieldErrors)
+      return
+    }
+
     setIsSubmitting(true)
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      })
 
-    // Simulate form submission
-    setTimeout(() => {
-      console.log("Form submitted:", formData)
+      const data = await res.json()
+
+      if (res.ok) {
+        setIsSubmitted(true)
+        setFormData({ name: "", email: "", subject: "", message: "" })
+        toast({ title: "Message sent!", description: "Thank you! I'll get back to you soon." })
+        setTimeout(() => setIsSubmitted(false), 3000)
+      } else {
+        toast({
+          title: "Failed to send",
+          description: data.error || "Please try again later.",
+          variant: "destructive",
+        })
+      }
+    } catch {
+      toast({
+        title: "Network error",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
       setIsSubmitting(false)
-      setIsSubmitted(true)
-      setFormData({ name: "", email: "", subject: "", message: "" })
-
-      // Reset success message after 3 seconds
-      setTimeout(() => {
-        setIsSubmitted(false)
-      }, 3000)
-    }, 1000)
-  }*/
+    }
+  }
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -174,8 +193,8 @@ export default function ContactPage() {
                       placeholder="Your name"
                       value={formData.name}
                       onChange={handleChange}
-                      required
                     />
+                    {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
                   </div>
                   <div className="space-y-2">
                     <label htmlFor="email" className="text-sm font-medium">
@@ -188,8 +207,8 @@ export default function ContactPage() {
                       placeholder="Your email"
                       value={formData.email}
                       onChange={handleChange}
-                      required
                     />
+                    {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
                   </div>
                 </div>
 
@@ -197,29 +216,29 @@ export default function ContactPage() {
                   <label htmlFor="subject" className="text-sm font-medium">
                     Subject
                   </label>
-                  <Input
-                    id="subject"
-                    name="subject"
-                    placeholder="Subject of your message"
-                    value={formData.subject}
-                    onChange={handleChange}
-                    required
-                  />
+                    <Input
+                      id="subject"
+                      name="subject"
+                      placeholder="Subject of your message"
+                      value={formData.subject}
+                      onChange={handleChange}
+                    />
+                    {errors.subject && <p className="text-sm text-red-500">{errors.subject}</p>}
                 </div>
 
                 <div className="space-y-2">
                   <label htmlFor="message" className="text-sm font-medium">
                     Message
                   </label>
-                  <Textarea
-                    id="message"
-                    name="message"
-                    placeholder="Your message"
-                    rows={5}
-                    value={formData.message}
-                    onChange={handleChange}
-                    required
-                  />
+                    <Textarea
+                      id="message"
+                      name="message"
+                      placeholder="Your message"
+                      rows={5}
+                      value={formData.message}
+                      onChange={handleChange}
+                    />
+                    {errors.message && <p className="text-sm text-red-500">{errors.message}</p>}
                 </div>
 
                 <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>

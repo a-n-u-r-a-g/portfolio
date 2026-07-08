@@ -5,3 +5,6 @@
 [build.environment]
   NETLIFY_NEXT_PLUGIN_SKIP = "false"
   NPM_FLAGS = "--legacy-peer-deps"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
